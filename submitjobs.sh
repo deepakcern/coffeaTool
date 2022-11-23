@@ -1,5 +1,5 @@
 year=2017
-tag=V5_fixedmigration
+tag=V6_OrthoCondOnCutAndHemApplied
 
 path=/eos/cms/store/group/phys_exotica/monoHiggs/monoHbb/skimmedFiles/merged_bkgrootfiles_splitted/
 count=1

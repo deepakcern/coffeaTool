@@ -184,3 +184,33 @@ def fillcutflow(h_hist,values):
     for ii, value in enumerate(values):
         h_hist.fill(ii+1,weight=value)
     return h_hist
+
+
+def isJetBasedHemMCEvent(st_isak4JetBasedHemEvent,st_isak8JetBasedHemEvent):
+    np.random.seed(123)
+    rmd =  np.random.rand(1,len(st_isak4JetBasedHemEvent))
+    ishem = st_isak4JetBasedHemEvent & st_isak8JetBasedHemEvent & (prob>0.66)
+    return ishem
+
+def isLowmetBasedHemMCEvent(ismetphiBasedHemEvent1):
+    np.random.seed(123)
+    rmd =  np.random.rand(1,len(ismetphiBasedHemEvent1))
+    ishem = st_isak4JetBasedHemEvent & st_isak8JetBasedHemEvent & (prob>0.66)
+    return ishem
+
+def isJetBasedHemEvent(year,isData,st_isak4JetBasedHemEvent,st_isak8JetBasedHemEvent):
+    if year=="2018":
+        if not isData: ishem = isJetBasedHemMCEvent(st_isak4JetBasedHemEvent,st_isak8JetBasedHemEvent)
+        if isData:ishem = st_isak4JetBasedHemEvent & st_isak8JetBasedHemEvent # Note: In root file this is apply for CD Era Only
+    else:
+        ishem = st_isak4JetBasedHemEvent # Note: For 2017, its False for all events
+    return ishem
+
+
+def isLowmetBasedHemEvent(year,isData,ismetphiBasedHemEvent1):
+    if year=="2018":
+        if not isData: ishem = isLowmetBasedHemMCEvent(ismetphiBasedHemEvent1)
+        if isData:ishem = ismetphiBasedHemEvent1 # Note: In root file this is apply for CD Era Only
+    else:
+        ishem = ismetphiBasedHemEvent1 # Note: For 2017, its False for all events
+    return ishem

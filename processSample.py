@@ -19,7 +19,7 @@ infile  = args.inputfile
 
 runOnFiles = args.multifiles 
 year       = args.year
-
+print ("year  : ",year)
 tag        = args.tag
 outputpath = "/eos/cms/store/group/phys_exotica/monoHiggs/monoHbb/coffeaoutput/"+year+"/"+tag
 
@@ -29,13 +29,13 @@ if runOnFiles:
     if '.txt' in infile.split('/')[-1]:
         fname=open(infile).readline().rstrip()
 else:
-    fname='/eos/cms/store/group/phys_exotica/monoHiggs/monoHbb/skimmedFiles/merged_bkgrootfiles_splitted/MET-Run2017F-31Mar2018_0.root'
-    #fname='/eos/cms/store/group/phys_exotica/monoHiggs/monoHbb/skimmedFiles/TTTest.root'
+    #fname='/eos/cms/store/group/phys_exotica/monoHiggs/monoHbb/skimmedFiles/merged_bkgrootfiles_splitted/MET-Run2017F-31Mar2018_0.root'
+    fname='/eos/cms/store/group/phys_exotica/monoHiggs/monoHbb/skimmedFiles/TTTest.root'
     outputpath = '.'
     #fname='/eos/cms/store/group/phys_exotica/monoHiggs/monoHbb/2018_skimmedFiles/v12.09_NoJERdata/MET-Run2018D-PromptReco-v2_146.root'
 
 
-if 'Run' in fname.split('/')[-1] or 'MET' in fname.split('/')[-1]: isData = True
+if 'Run' in fname.split('/')[-1] or 'MET' in fname.split('/')[-1] or 'EGamma' in fname.split('/')[-1] or 'SingleElectron': isData = True
 else:isData=False
 
 if 'TTT' in fname.split('/')[-1]:dataset="TT"

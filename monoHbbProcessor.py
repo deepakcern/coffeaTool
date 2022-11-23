@@ -224,12 +224,16 @@ class monoHbbProcessor(processor.ProcessorABC):
         cleanedPho = (isclean(events.phoeta,events.jeteta,events.phophi,events.jetphi,cut_=0.4)) & (events.phopt>20)
         events['npho']          = ak.num(events.phopt[cleanedPho])
         
-        events['werecoilPt']     = getrecoil1(events.st_elePx,events.st_elePy,events.st_pfMetCorrPt,events.st_pfMetCorrPhi) 
-        events['wmurecoilPt']     = getrecoil1(events.st_muPx,events.st_muPy,events.st_pfMetCorrPt,events.st_pfMetCorrPhi) 
-        events['zeerecoilPt'] = getrecoil2(events.st_elePx,events.st_elePy,events.st_pfMetCorrPt,events.st_pfMetCorrPhi)
-        events['zmumurecoilPt']=getrecoil2(events.st_muPx,events.st_muPy,events.st_pfMetCorrPt,events.st_pfMetCorrPhi)
+        events['werecoilPt']    = getrecoil1(events.st_elePx,events.st_elePy,events.st_pfMetCorrPt,events.st_pfMetCorrPhi) 
+        events['wmurecoilPt']   = getrecoil1(events.st_muPx,events.st_muPy,events.st_pfMetCorrPt,events.st_pfMetCorrPhi) 
+        events['zeerecoilPt']   = getrecoil2(events.st_elePx,events.st_elePy,events.st_pfMetCorrPt,events.st_pfMetCorrPhi)
+        events['zmumurecoilPt'] = getrecoil2(events.st_muPx,events.st_muPy,events.st_pfMetCorrPt,events.st_pfMetCorrPhi)
+        
+        events['isJetBasedHem'] = isJetBasedHemEvent(self.year,events.metadata['isData'],events.st_isak4JetBasedHemEvent,events.st_isak8JetBasedHemEvent)
+        events['isMetBasedHem'] = isLowmetBasedHemEvent(self.year,events.metadata['isData'],events.st_ismetphiBasedHemEvent1)
 
-    
+                
+
         return events
  
     def process(self, events):
@@ -247,7 +251,7 @@ class monoHbbProcessor(processor.ProcessorABC):
         '''
         selection = PackedSelection()
 
-        selection.add("trigger", events.st_mettrigdecision)
+        selection.add("trigger", (events.st_mettrigdecision) & (~events.isJetBasedHem) & (~events.isMetBasedHem))
         selection.add("noElectron", (events.nlooseEle == 0 ) & (events.st_mettrigdecision))
         selection.add("noMuon", events.nlooseMu == 0)
         selection.add("noTau", events.st_nTau_discBased_looseElelooseMuVeto == 0)
@@ -267,7 +271,8 @@ class monoHbbProcessor(processor.ProcessorABC):
 
         selection.add("OneElectron", events.ntightEle==1)
         selection.add("OneMuon",    events.ntightMu==1)
-       
+        #selection.add("isJetBasedHem", ~events.isJetBasedHem)
+        #selection.add("isMetBasedHem", ~events.isMetBasedHem)
         #selection.add("Recoil200", (ak.any(events.werecoilPt>200, axis=1)) | (ak.any(events.wmurecoilPt>200, axis=1)) | (ak.any(events.zmumurecoilPt>200, axis=1)) | (ak.any(events.zeerecoilPt>200, axis=1)))
         #selection.add("Recoil250", ak.any(events.werecoilPt>250) | ak.any(events.wmurecoilPt>250) | ak.any(events.zmumurecoilPt>250) | ak.any(events.zeerecoilPt>250))
 
