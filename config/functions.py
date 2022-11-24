@@ -187,21 +187,28 @@ def fillcutflow(h_hist,values):
 
 
 def isJetBasedHemMCEvent(st_isak4JetBasedHemEvent,st_isak8JetBasedHemEvent):
+    ishem = (st_isak4JetBasedHemEvent) | (st_isak8JetBasedHemEvent)
     np.random.seed(123)
-    rmd =  np.random.rand(1,len(st_isak4JetBasedHemEvent))
-    ishem = st_isak4JetBasedHemEvent & st_isak8JetBasedHemEvent & (prob>0.66)
+    array_index = np.where(ishem)[0]
+    prob =  np.random.rand(1,len(array_index))[0]
+    Nothemregion = np.where(prob>0.646)[0]
+    array_index = array_index[Nothemregion]
+    ak.to_numpy(ishem)[array_index] = [False] * len(array_index)
     return ishem
 
 def isLowmetBasedHemMCEvent(ismetphiBasedHemEvent1):
     np.random.seed(123)
-    rmd =  np.random.rand(1,len(ismetphiBasedHemEvent1))
-    ishem = st_isak4JetBasedHemEvent & st_isak8JetBasedHemEvent & (prob>0.66)
-    return ishem
+    array_index = np.where(ismetphiBasedHemEvent1)[0]
+    prob =  np.random.rand(1,len(array_index))
+    Nothemregion = np.where(prob>0.646)[0]
+    array_index = array_index[Nothemregion]
+    ak.to_numpy(ismetphiBasedHemEvent1)[array_index] = [False] * len(array_index)
+    return ismetphiBasedHemEvent1
 
 def isJetBasedHemEvent(year,isData,st_isak4JetBasedHemEvent,st_isak8JetBasedHemEvent):
     if year=="2018":
         if not isData: ishem = isJetBasedHemMCEvent(st_isak4JetBasedHemEvent,st_isak8JetBasedHemEvent)
-        if isData:ishem = st_isak4JetBasedHemEvent & st_isak8JetBasedHemEvent # Note: In root file this is apply for CD Era Only
+        if isData:ishem = (st_isak4JetBasedHemEvent) | (st_isak8JetBasedHemEvent) # Note: In root file this is apply for CD Era Only
     else:
         ishem = st_isak4JetBasedHemEvent # Note: For 2017, its False for all events
     return ishem

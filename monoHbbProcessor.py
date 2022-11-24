@@ -251,7 +251,7 @@ class monoHbbProcessor(processor.ProcessorABC):
         '''
         selection = PackedSelection()
 
-        selection.add("trigger", (events.st_mettrigdecision) & (~events.isJetBasedHem) & (~events.isMetBasedHem))
+        selection.add("trigger", (events.st_mettrigdecision) & ~((events.isJetBasedHem) | (events.isMetBasedHem)))
         selection.add("noElectron", (events.nlooseEle == 0 ) & (events.st_mettrigdecision))
         selection.add("noMuon", events.nlooseMu == 0)
         selection.add("noTau", events.st_nTau_discBased_looseElelooseMuVeto == 0)
@@ -281,7 +281,7 @@ class monoHbbProcessor(processor.ProcessorABC):
         GET EVENT WEIGHTS FOR MC AND SET 1 FOR DATA
         -------------------------------------------
         '''
-
+        
         if not events.metadata['isData']:
             weights = self.addWeights(events)
         else:

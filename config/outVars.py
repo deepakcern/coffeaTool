@@ -3,7 +3,7 @@ def fillbranch_R(events,goodevent,weights,reg="sr"):
     events = events[goodevent]
     doc = {"DiJetMass":events.DiJetMass[:,0],"DiJetPt":events.DiJetPt[:,0],"DiJetEta":events.DiJetEta[:,0],"DiJetPhi":events.DiJetPhi[:,0],
            "Jet1Pt":events.bjetpt[:,0],"Jet1Eta":events.bjeteta[:,0],"Jet1Phi":events.bjetphi[:,0],
-           "Jet2Pt":events.bjetpt[:,1],"Jet1Eta":events.bjeteta[:,1],"Jet1Phi":events.bjetphi[:,1],
+           "Jet2Pt":events.bjetpt[:,1],"Jet2Eta":events.bjeteta[:,1],"Jet2Phi":events.bjetphi[:,1],
            "MET":events.st_METXYCorr_Met,
            "CaloMET":events.st_pfpatCaloMETPt,
            "isak4JetBasedHemEvent":events.st_isak4JetBasedHemEvent,
