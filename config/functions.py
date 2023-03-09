@@ -198,11 +198,13 @@ def isJetBasedHemMCEvent(st_isak4JetBasedHemEvent,st_isak8JetBasedHemEvent):
 
 def isLowmetBasedHemMCEvent(ismetphiBasedHemEvent1):
     np.random.seed(123)
-    array_index = np.where(ismetphiBasedHemEvent1)[0]
-    prob =  np.random.rand(1,len(array_index))
+    array_index = np.array(np.where(ismetphiBasedHemEvent1)[0])
+    prob =  np.random.rand(1,len(array_index))[0]
     Nothemregion = np.where(prob>0.646)[0]
     array_index = array_index[Nothemregion]
+
     ak.to_numpy(ismetphiBasedHemEvent1)[array_index] = [False] * len(array_index)
+    
     return ismetphiBasedHemEvent1
 
 def isJetBasedHemEvent(year,isData,st_isak4JetBasedHemEvent,st_isak8JetBasedHemEvent):
@@ -215,6 +217,7 @@ def isJetBasedHemEvent(year,isData,st_isak4JetBasedHemEvent,st_isak8JetBasedHemE
 
 
 def isLowmetBasedHemEvent(year,isData,ismetphiBasedHemEvent1):
+    #print ("checking year data type ",type(isData))
     if year=="2018":
         if not isData: ishem = isLowmetBasedHemMCEvent(ismetphiBasedHemEvent1)
         if isData:ishem = ismetphiBasedHemEvent1 # Note: In root file this is apply for CD Era Only

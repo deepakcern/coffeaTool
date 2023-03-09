@@ -1,16 +1,29 @@
 import awkward as ak
 def fillbranch_R(events,goodevent,weights,reg="sr"):
     events = events[goodevent]
+    #test = events.st_THINjetUncSources[:,0]
+    #print ("fjetcsv ",events.st_fjetProbHbb)
+    #print ("Jet1Pt",events.bjetpt)
+    if not len(events)==0:
+        fjetcsv = events.st_fjetProbHbb
+        fjetpt = events.fjetpt
+    else:
+        fjetcsv=events.st_fjetProbHbb[:,0]
+        fjetpt = events.fjetpt[:,0]
+    #lenght = [[999]]*len(events)
+    #print ('lenght',len(events))
+    #print ("testing",ak.concatenate([ak.Array(fjetcsv), ak.Array(lenght)], axis=1)) 
     doc = {"DiJetMass":events.DiJetMass[:,0],"DiJetPt":events.DiJetPt[:,0],"DiJetEta":events.DiJetEta[:,0],"DiJetPhi":events.DiJetPhi[:,0],
-           "Jet1Pt":events.bjetpt[:,0],"Jet1Eta":events.bjeteta[:,0],"Jet1Phi":events.bjetphi[:,0],
-           "Jet2Pt":events.bjetpt[:,1],"Jet2Eta":events.bjeteta[:,1],"Jet2Phi":events.bjetphi[:,1],
-           "MET":events.st_METXYCorr_Met,
-           "CaloMET":events.st_pfpatCaloMETPt,
+           "Jet1Pt":events.bjetpt[:,0],"Jet1Eta":events.bjeteta[:,0],"Jet1Phi":events.bjetphi[:,0],"Jet1CSV":events.bjetcsv[:,0],
+           "Jet2Pt":events.bjetpt[:,1],"Jet2Eta":events.bjeteta[:,1],"Jet2Phi":events.bjetphi[:,1],"Jet2CSV":events.bjetcsv[:,1],
+           "nJets":ak.num(events.jetpt),#"nfjet":ak.num(events.fjetptsel),"fjetcsv":events.fjetcsvsel,"fjetpt":events.fjetptsel,
+           "MET":events.st_METXYCorr_Met,"met_Phi":events.st_METXYCorr_MetPhi,
+           "CaloMET":events.st_pfpatCaloMETPt,"CaloMETPhi":events.st_pfpatCaloMETPhi,
            "isak4JetBasedHemEvent":events.st_isak4JetBasedHemEvent,
            "isak8JetBasedHemEvent":events.st_isak8JetBasedHemEvent,
            "ismetphiBasedHemEvent1":events.st_ismetphiBasedHemEvent1,
            "ismetphiBasedHemEvent2":events.st_ismetphiBasedHemEvent2,
-           "eventId":events.st_eventId,"runId":events.st_runId, "lumiSection":events.st_lumiSection,
+           "event":events.st_eventId,"run":events.st_runId, "lumi":events.st_lumiSection,
            "minDphi":ak.to_numpy(events.minDphi_jetMet),
            "DPhi_trkpfMET":events.Dphi_trkpfMet,
            "weight":weights.weight()[goodevent] 
@@ -38,15 +51,15 @@ def fillbranch_B(events,goodevent,weights,isCR=False):
            "FJetEta":events.fjetetasel[:,0],
            "FJetPhi":events.fjetphisel[:,0],
            "FJetMass":events.fjetmasssel[:,0],
-           "FJetCSV":events.fjetcsvsel[:,0],
-           "MET":events.st_METXYCorr_Met,
-           "CaloMET":events.st_pfpatCaloMETPt,
+           "FJetCSV":events.fjetcsvsel[:,0],"nJets":ak.num(events.isojetpt),
+           "MET":events.st_METXYCorr_Met,"met_Phi":events.st_METXYCorr_MetPhi,
+           "CaloMET":events.st_pfpatCaloMETPt,"CaloMETPhi":events.st_pfpatCaloMETPhi,
            "isak4JetBasedHemEvent":events.st_isak4JetBasedHemEvent,
            "isak8JetBasedHemEvent":events.st_isak8JetBasedHemEvent,
            "ismetphiBasedHemEvent1":events.st_ismetphiBasedHemEvent1,
            "ismetphiBasedHemEvent2":events.st_ismetphiBasedHemEvent2,
-           "eventId":events.st_eventId,"runId":events.st_runId, "lumiSection":events.st_lumiSection,
-           "min_dPhi":ak.to_numpy(events.minDphi_jetMet),
+           "event":events.st_eventId,"run":events.st_runId, "lumi":events.st_lumiSection,
+           "minDphi":ak.to_numpy(events.minDphi_jetMet),
            "DPhi_trkpfMET":events.Dphi_trkpfMet,
            "weight":weights.weight()[goodevent]
            #"METSFUp":weights.weight("metSFUp")[goodevent],"METSFDown":weights.weight("metSFDown")[goodevent],

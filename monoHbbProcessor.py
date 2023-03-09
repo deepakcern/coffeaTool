@@ -164,7 +164,7 @@ class monoHbbProcessor(processor.ProcessorABC):
         events['fjeteta']   =geteta(events.st_fjetPx,events.st_fjetPy,events.st_fjetPz)
         events['fjetphi']   =getphi(events.st_fjetPx,events.st_fjetPy)
  
-        fjet_sel = (np.abs(events.fjeteta) <2.5) & (events.st_fjetSDMass>70) & (events.st_fjetSDMass < 150) & (events.st_fjetProbHbb > 0.86)
+        fjet_sel = (np.abs(events.fjeteta) <2.5) & (events.st_fjetSDMass>70) & (events.st_fjetSDMass < 150) & (events.st_fjetProbHbb >0.86)
         events['nfjetsel'] = ak.num(events.fjetpt[fjet_sel])
         events['fjetptsel']= events.fjetpt[fjet_sel]
         events['fjetetasel']= events.fjeteta[fjet_sel]
@@ -179,7 +179,8 @@ class monoHbbProcessor(processor.ProcessorABC):
         events['bjetphi']   =events.jetphi[bjetCond]
         events['bjetHadronFla'] = events.st_THINjetHadronFlavor[bjetCond]
         events['bjetE']       =events.st_THINjetEnergy[bjetCond]
-        
+        events['bjetcsv']     = events.st_THINjetDeepCSV[bjetCond]     
+ 
         events['DiJetMass']     = getMassPair(events.st_THINjetPx[bjetCond],events.st_THINjetPy[bjetCond],events.st_THINjetPz[bjetCond],events.st_THINjetEnergy[bjetCond])
         parivars = getPair_ptetaphi(events.st_THINjetPx[bjetCond],events.st_THINjetPy[bjetCond],events.st_THINjetPz[bjetCond],events.st_THINjetEnergy[bjetCond])
         events['DiJetPt'] = parivars["pt"]
@@ -231,7 +232,8 @@ class monoHbbProcessor(processor.ProcessorABC):
         
         events['isJetBasedHem'] = isJetBasedHemEvent(self.year,events.metadata['isData'],events.st_isak4JetBasedHemEvent,events.st_isak8JetBasedHemEvent)
         events['isMetBasedHem'] = isLowmetBasedHemEvent(self.year,events.metadata['isData'],events.st_ismetphiBasedHemEvent1)
-
+        #print ('ismetphiBasedHemEvent1',len(np.where(events.st_ismetphiBasedHemEvent1)[0]))
+        #print ('isMetBasedHem',len(np.where(events.isMetBasedHem)[0]))
                 
 
         return events
@@ -240,6 +242,8 @@ class monoHbbProcessor(processor.ProcessorABC):
         print ('\n'+"================ Processor  is running now =================="+'\n')
 
         dataset = events.metadata['dataset']
+        #events['st_METXYCorr_Met']   =events.st_pfpuppiMETPt
+        #events['st_METXYCorr_MetPhi']=events.st_pfpuppiMETPhi
         #events = events[(events.st_runId==306154) & (events.st_lumiSection==676) & (events.st_eventId==1161700016)]
         self.setupYearDependency(events)
         events  = self.updateJetColl(events)
@@ -251,7 +255,7 @@ class monoHbbProcessor(processor.ProcessorABC):
         '''
         selection = PackedSelection()
 
-        selection.add("trigger", (events.st_mettrigdecision) & ~((events.isJetBasedHem) | (events.isMetBasedHem)))
+        selection.add("trigger", (events.st_mettrigdecision) & (~(events.isJetBasedHem)) & (~(events.isMetBasedHem)))
         selection.add("noElectron", (events.nlooseEle == 0 ) & (events.st_mettrigdecision))
         selection.add("noMuon", events.nlooseMu == 0)
         selection.add("noTau", events.st_nTau_discBased_looseElelooseMuVeto == 0)
@@ -268,6 +272,7 @@ class monoHbbProcessor(processor.ProcessorABC):
         selection.add("nfjet",events.nfjetsel==1)
         selection.add("noIsobjet",ak.num(events.isobjetpt)==0)
         selection.add("nIsojet",ak.num(events.isojetpt)<=2)
+        selection.add("DPhitrkpfMET",events.Dphi_trkpfMet<2)
 
         selection.add("OneElectron", events.ntightEle==1)
         selection.add("OneMuon",    events.ntightMu==1)
@@ -300,7 +305,8 @@ class monoHbbProcessor(processor.ProcessorABC):
                 fout["monoHbb_SR_boosted"] = fillbranch_B(events,goodevent,weights["Boosted"])
            if region.startswith("qcd"):
                 fout["monoHbb_qcd_boosted"] = fillbranch_B(events,goodevent,weights["Boosted"])
-
+           if region.startswith("ddb"):
+                fout["monoHbb_ddb_boosted"] = fillbranch_B(events,goodevent,weights["Boosted"])
 
         for region, cuts in regions_R.items():
             goodevent = (selection.require(**cuts)) & (~selection.require(**regions_B[region]))
